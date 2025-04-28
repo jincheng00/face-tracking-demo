@@ -30,9 +30,9 @@ flipButton.addEventListener('click', () => {
 
 // 加载人脸检测模型
 Promise.all([
-  faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-  faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-  faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
+  faceapi.nets.tinyFaceDetector.loadFromUri('/face-tracking-demo/models'),
+  faceapi.nets.faceLandmark68Net.loadFromUri('/face-tracking-demo/models'),
+  faceapi.nets.faceRecognitionNet.loadFromUri('/face-tracking-demo/models'),
 ]).then(() => {
   startCamera();
   video.addEventListener('play', () => {
