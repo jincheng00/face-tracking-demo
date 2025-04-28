@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Face Tracking Demo</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f2f5;
+      font-family: Arial, sans-serif;
+    }
+    #video, #canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #flipButton {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 2;
+    }
+    #container {
+      position: relative;
+      width: 640px;
+      height: 480px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <video id="video" width="640" height="480" autoplay muted></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+  </div>
+
+  <button id="flipButton">翻转摄像头</button>
+
+  <script src="face-api.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
