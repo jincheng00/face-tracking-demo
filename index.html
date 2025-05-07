@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Face Tracking Demo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Face Tracking + Dify Chat</title>
   <style>
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       height: 100vh;
       margin: 0;
       background-color: #f0f2f5;
       font-family: Arial, sans-serif;
     }
+
+    #container {
+      position: relative;
+      width: 640px;
+      height: 480px;
+      margin-top: 20px;
+    }
+
     #video, #canvas {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      top: 0;
+      left: 0;
     }
+
     #flipButton {
-      margin-top: 20px;
+      margin: 10px 0;
       padding: 10px 20px;
       border: none;
       background-color: #4CAF50;
@@ -32,11 +40,43 @@
       cursor: pointer;
       z-index: 2;
     }
-    #container {
-      position: relative;
+
+    #chat-box {
       width: 640px;
-      height: 480px;
+      height: 200px;
+      overflow-y: auto;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 6px;
     }
+
+    .msg { margin: 6px 0; }
+    .user { color: #007BFF; }
+    .bot { color: #28A745; }
+
+    #chat-input {
+      width: 640px;
+      display: flex;
+      margin-top: 10px;
+    }
+
+    #chat-input input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #chat-input button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
@@ -48,8 +88,64 @@
 
   <button id="flipButton">翻转摄像头</button>
 
+  <!-- Dify 聊天区域 -->
+  <div id="chat-box"></div>
+  <div id="chat-input">
+    <input id="user-input" type="text" placeholder="请输入您的问题..." />
+    <button onclick="sendMessage()">发送</button>
+  </div>
+
+  <!-- 你的脚本 -->
   <script src="face-api.js"></script>
   <script src="script.js"></script>
+
+  <!-- Dify 智能体脚本 -->
+  <script>
+    const API_KEY = 'YOUR_API_KEY_HERE';  // <<< 替换为你的 Dify API Key
+    const API_URL = 'https://api.dify.ai/v1/chat-messages';
+    let conversationId = null;
+
+    async function sendMessage() {
+      const inputEl = document.getElementById('user-input');
+      const userText = inputEl.value.trim();
+      if (!userText) return;
+
+      showMessage(userText, 'user');
+      inputEl.value = '';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + API_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            inputs: {},
+            query: userText,
+            response_mode: 'blocking',
+            conversation_id: conversationId
+          })
+        });
+
+        const data = await res.json();
+        conversationId = data.conversation_id;
+        showMessage(data.answer, 'bot');
+      } catch (err) {
+        showMessage('发生错误，请稍后再试。', 'bot');
+        console.error(err);
+      }
+    }
+
+    function showMessage(text, role) {
+      const chatBox = document.getElementById('chat-box');
+      const msgEl = document.createElement('div');
+      msgEl.className = 'msg ' + role;
+      msgEl.innerText = (role === 'user' ? '你：' : 'AI：') + text;
+      chatBox.appendChild(msgEl);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
 
 </body>
 </html>
